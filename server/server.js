@@ -5,17 +5,21 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./config/db');
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 
-// ─── CORS Configuration ──────────────────────────────────────────────────────
+// CORS Configuration
 const allowedOrigins = [
   process.env.CLIENT_URL,
+
+  // Vercel frontend domains
   'https://medicine-availability-finder-reserv.vercel.app',
   'https://medicine-availability-finder-reservation-system-pea84oxk3.vercel.app',
+  'https://medicine-avalilabilty-finder-reservation-system-pea84oxk3.vercel.app',
   'https://medicine-availability-git-6acbe3-babalala1231412-3360s-projects.vercel.app',
+
+  // Local development
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
@@ -38,11 +42,11 @@ app.use(
   })
 );
 
-// ─── Middleware ──────────────────────────────────────────────────────────────
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ─── Health Check ────────────────────────────────────────────────────────────
+// Health Check
 app.get('/api/test', (req, res) => {
   res.status(200).json({
     success: true,
@@ -52,7 +56,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// ─── API Routes ──────────────────────────────────────────────────────────────
+// API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pharmacies', require('./routes/pharmacyRoutes'));
 app.use('/api/medicines', require('./routes/medicineRoutes'));
@@ -60,7 +64,7 @@ app.use('/api/inventory', require('./routes/inventoryRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/reservations', require('./routes/reservationRoutes'));
 
-// ─── 404 Handler ─────────────────────────────────────────────────────────────
+// 404 Handler
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -68,7 +72,7 @@ app.use((req, res) => {
   });
 });
 
-// ─── Global Error Handler ────────────────────────────────────────────────────
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Server Error:', err.message);
 
@@ -83,10 +87,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Admin Account Seeder ────────────────────────────────────────────────────
+// Admin Account Seeder
 const seedAdminUser = async () => {
   try {
     const User = require('./models/User');
+
     const existing = await User.findOne({
       email: 'admin@medifind.com',
     });
@@ -111,7 +116,7 @@ const seedAdminUser = async () => {
   }
 };
 
-// ─── Start Server ────────────────────────────────────────────────────────────
+// Start Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
