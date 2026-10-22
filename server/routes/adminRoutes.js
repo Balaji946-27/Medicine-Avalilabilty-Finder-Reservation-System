@@ -6,6 +6,7 @@ const {
   toggleBlockUser,
   getAllPharmaciesAdmin,
   toggleVerifyPharmacy,
+  getAllReservationsAdmin,
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -17,5 +18,6 @@ router.get('/users', getAllUsers);
 router.put('/users/:id/block', toggleBlockUser);
 router.get('/pharmacies', getAllPharmaciesAdmin);
 router.put('/pharmacies/:id/verify', toggleVerifyPharmacy);
+router.get('/reservations', getAllReservationsAdmin);
 
 module.exports = router;

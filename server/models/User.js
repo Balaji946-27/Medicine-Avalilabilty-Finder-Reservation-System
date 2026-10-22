@@ -31,6 +31,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: [20, 'Phone number cannot exceed 20 characters'],
+      default: '',
+    },
+    address: {
+      type: String,
+      trim: true,
+      maxlength: [250, 'Address cannot exceed 250 characters'],
+      default: '',
+    },
   },
   {
     timestamps: true, // adds createdAt and updatedAt

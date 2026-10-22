@@ -67,11 +67,11 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
+      <div className="auth-card auth-card-register">
         {/* Logo */}
         <div className="auth-logo">
           <div className="auth-logo-icon">M</div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.35rem', color: 'var(--text)' }}>
             Medi<span style={{ color: 'var(--primary)' }}>Find</span>
           </span>
         </div>
@@ -161,54 +161,57 @@ const Register = () => {
             />
           </div>
 
-          {/* Password */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="register-password">
-              Password <span className="required">*</span>
-            </label>
-            <div className="input-group">
+          {/* Password & Confirm Password in responsive 2-column grid on desktop */}
+          <div className="register-grid-2">
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="register-password">
+                Password <span className="required">*</span>
+              </label>
+              <div className="input-group">
+                <input
+                  id="register-password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  className="form-input"
+                  placeholder="Minimum 6 characters"
+                  value={formData.password}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="input-group-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="register-confirm-password">
+                Confirm Password <span className="required">*</span>
+              </label>
               <input
-                id="register-password"
+                id="register-confirm-password"
                 type={showPassword ? 'text' : 'password'}
-                name="password"
-                className="form-input"
-                placeholder="Minimum 6 characters"
-                value={formData.password}
+                name="confirmPassword"
+                className={`form-input ${passwordMismatch ? 'form-input-error' : ''}`}
+                placeholder="Repeat your password"
+                value={formData.confirmPassword}
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
+                style={passwordMismatch ? { borderColor: 'var(--danger)' } : {}}
               />
-              <button
-                type="button"
-                className="input-group-icon"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
+              {passwordMismatch && (
+                <span className="form-error">Passwords do not match</span>
+              )}
             </div>
-          </div>
-
-          {/* Confirm Password */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="register-confirm-password">
-              Confirm Password <span className="required">*</span>
-            </label>
-            <input
-              id="register-confirm-password"
-              type={showPassword ? 'text' : 'password'}
-              name="confirmPassword"
-              className={`form-input ${passwordMismatch ? 'form-input-error' : ''}`}
-              placeholder="Repeat your password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              autoComplete="new-password"
-              required
-              style={passwordMismatch ? { borderColor: 'var(--danger)' } : {}}
-            />
-            {passwordMismatch && (
-              <span className="form-error">Passwords do not match</span>
-            )}
           </div>
 
           <button
@@ -216,12 +219,13 @@ const Register = () => {
             className="btn btn-primary w-full btn-lg"
             disabled={loading}
             id="register-submit-btn"
+            style={{ marginTop: 'var(--space-2)' }}
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>
 
-        <p className="auth-link" style={{ marginTop: 'var(--space-4)' }}>
+        <p className="auth-link" style={{ marginTop: 'var(--space-5)' }}>
           Already have an account?{' '}
           <Link to="/login">Sign in</Link>
         </p>

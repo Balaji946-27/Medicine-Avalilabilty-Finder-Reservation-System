@@ -108,4 +108,51 @@ const getMe = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getMe };
+// ─── PUT /api/auth/profile ───────────────────────────────────────────────────
+const updateProfile = async (req, res, next) => {
+  try {
+    const { name, phone, address } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+
+    if (name !== undefined) {
+      if (!name.trim()) {
+        return next(new AppError('Name cannot be empty', 400));
+      }
+      user.name = name.trim();
+    }
+
+    if (phone !== undefined) {
+      user.phone = phone.trim();
+    }
+
+    if (address !== undefined) {
+      user.address = address.trim();
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        address: user.address,
+        isBlocked: user.isBlocked,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, getMe, updateProfile };

@@ -8,22 +8,15 @@ import { useAuth } from '../context/AuthContext';
 const Home = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [apiStatus, setApiStatus] = useState(null); // null | 'ok' | 'error'
-  const [apiMessage, setApiMessage] = useState('');
   const [heroSearch, setHeroSearch] = useState('');
 
   useEffect(() => {
-    const checkBackend = async () => {
-      try {
-        const res = await api.get('/api/test');
-        setApiStatus('ok');
-        setApiMessage(res.data.message);
-      } catch (err) {
-        setApiStatus('error');
-        setApiMessage('Backend connection failed');
-      }
-    };
-    checkBackend();
+    // Health check logged silently in dev mode
+    if (import.meta.env.DEV) {
+      api.get('/api/test')
+        .then((res) => console.log('Backend health status:', res.data?.message))
+        .catch((err) => console.warn('Backend health check failed:', err.message));
+    }
   }, []);
 
   const handleHeroSearchSubmit = (e) => {
@@ -38,13 +31,6 @@ const Home = () => {
   return (
     <>
       <Navbar />
-
-      {/* API Status Banner */}
-      {apiStatus && (
-        <div className={`api-status-bar ${apiStatus === 'error' ? 'error' : ''}`}>
-          {apiStatus === 'ok' ? '✅' : '❌'} {apiMessage}
-        </div>
-      )}
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="hero">

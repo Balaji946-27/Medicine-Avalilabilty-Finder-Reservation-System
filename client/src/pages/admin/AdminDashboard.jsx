@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import DashboardCard from '../../components/DashboardCard';
 import adminService from '../../services/adminService';
+import { DailyReservationTrendsChart, ReservationStatusChart } from '../../components/AdminCharts';
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -12,6 +13,9 @@ const AdminDashboard = () => {
     totalPharmacies: 0,
     totalMedicines: 0,
     totalInventoryItems: 0,
+    totalReservations: 0,
+    dailyReservations: [],
+    statusDistribution: [],
   });
 
   useEffect(() => {
@@ -33,10 +37,10 @@ const AdminDashboard = () => {
   };
 
   const stats = [
-    { title: 'Total Users',           value: statsData.totalUsers, icon: '👥', colorClass: 'teal',  subtitle: 'Registered accounts' },
+    { title: 'Total Users',           value: statsData.totalUsers, icon: '👥', colorClass: 'teal',  subtitle: `${statsData.totalPatients || 0} patients, ${statsData.totalPharmacyUsers || 0} pharmacies` },
     { title: 'Registered Pharmacies', value: statsData.totalPharmacies, icon: '🏥', colorClass: 'blue',  subtitle: 'Active pharmacies' },
-    { title: 'Medicine Catalogue',    value: statsData.totalMedicines, icon: '💊', colorClass: 'green', subtitle: 'Medicines in database' },
-    { title: 'Inventory Items',       value: statsData.totalInventoryItems, icon: '📦', colorClass: 'amber', subtitle: 'Total pharmacy stock items' },
+    { title: 'Medicine Catalogue',    value: statsData.totalMedicines, icon: '💊', colorClass: 'green', subtitle: 'Cataloged medicines' },
+    { title: 'Total Reservations',    value: statsData.totalReservations || 0, icon: '📋', colorClass: 'indigo', subtitle: 'All-time reservations' },
   ];
 
   const managementSections = [
@@ -63,7 +67,13 @@ const AdminDashboard = () => {
   return (
     <div>
       <header className="navbar" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-        <button className="hamburger" style={{ display: 'flex' }} onClick={() => setSidebarOpen(true)} aria-label="Open menu">☰</button>
+        <button
+          className="hamburger"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+        >
+          ☰
+        </button>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text)' }}>
           Admin Panel
         </span>
@@ -103,32 +113,13 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* System Status Banner */}
-          <div
-            className="card mb-8"
-            style={{ background: 'linear-gradient(135deg, #0f1c2e, #0a3d35)', border: 'none' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-5)' }}>
-              <span style={{ fontSize: '2rem' }}>🛡️</span>
-              <div>
-                <p style={{ fontWeight: 700, color: '#fff', marginBottom: 4 }}>MediFind Platform Active</p>
-                <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>
-                  All authentication, role authorization, and database management endpoints are live.
-                </p>
-              </div>
-              <div
-                style={{
-                  marginLeft: 'auto', background: 'rgba(0,200,150,0.2)',
-                  border: '1px solid rgba(0,200,150,0.4)',
-                  borderRadius: 'var(--radius-full)', padding: '6px 16px',
-                  color: '#4dd9c8', fontSize: '0.8rem', fontWeight: 700,
-                  flexShrink: 0,
-                }}
-              >
-                ● ACTIVE
-              </div>
+          {/* Charts: Daily Reservation Trends & Reservation Status Distribution */}
+          {!loading && (
+            <div className="grid grid-2 mb-8" style={{ gap: 'var(--space-5)' }}>
+              <DailyReservationTrendsChart data={statsData.dailyReservations || []} />
+              <ReservationStatusChart data={statsData.statusDistribution || []} />
             </div>
-          </div>
+          )}
 
           {/* Management Sections */}
           <h2 style={{ fontSize: '1.15rem', marginBottom: 'var(--space-5)', color: 'var(--text)' }}>

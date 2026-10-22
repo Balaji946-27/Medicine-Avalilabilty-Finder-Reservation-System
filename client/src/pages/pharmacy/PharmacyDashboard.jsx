@@ -4,8 +4,10 @@ import Sidebar from '../../components/Sidebar';
 import DashboardCard from '../../components/DashboardCard';
 import StatusBadge from '../../components/StatusBadge';
 import EmptyState from '../../components/EmptyState';
+import PharmacyInventoryChart from '../../components/PharmacyInventoryChart';
 import inventoryService from '../../services/inventoryService';
 import pharmacyService from '../../services/pharmacyService';
+import reservationService from '../../services/reservationService';
 import { useAuth } from '../../context/AuthContext';
 
 const PharmacyDashboard = () => {
@@ -13,6 +15,7 @@ const PharmacyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [pharmacyProfile, setPharmacyProfile] = useState(null);
   const [inventory, setInventory] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +34,11 @@ const PharmacyDashboard = () => {
       if (invRes.success) {
         setInventory(invRes.data || []);
       }
+
+      const resRes = await reservationService.getPharmacyReservations();
+      if (resRes.success) {
+        setReservations(resRes.data || []);
+      }
     } catch (err) {
       console.error('Error loading dashboard data:', err);
     } finally {
@@ -46,18 +54,27 @@ const PharmacyDashboard = () => {
   const lowStockCount = inventory.filter(
     (item) => (item.totalQuantity - (item.reservedQuantity || 0)) <= 10
   ).length;
+  const pendingReservationsCount = reservations.filter(
+    (r) => r.status === 'pending'
+  ).length;
 
   const stats = [
-    { title: 'Total Medicines',  value: totalMedicines, icon: '💊', colorClass: 'teal',  subtitle: 'Distinct SKUs' },
-    { title: 'Available Stock',  value: availableStockCount, icon: '✅', colorClass: 'green', subtitle: 'Units in stock' },
-    { title: 'Low Stock Items',  value: lowStockCount, icon: '⚠️', colorClass: 'amber', subtitle: '≤10 units left' },
-    { title: 'Inventory Items',  value: totalMedicines, icon: '📦', colorClass: 'blue',  subtitle: 'Total cataloged' },
+    { title: 'Total Medicines',     value: totalMedicines, icon: '💊', colorClass: 'teal',  subtitle: 'Distinct SKUs' },
+    { title: 'Available Stock',     value: availableStockCount, icon: '✅', colorClass: 'green', subtitle: 'Units in stock' },
+    { title: 'Low Stock Items',     value: lowStockCount, icon: '⚠️', colorClass: 'amber', subtitle: '≤10 units left' },
+    { title: 'Pending Pickup Req.', value: pendingReservationsCount, icon: '📋', colorClass: 'blue',  subtitle: 'Awaiting confirmation' },
   ];
 
   return (
     <div>
       <header className="navbar" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-        <button className="hamburger" style={{ display: 'flex' }} onClick={() => setSidebarOpen(true)} aria-label="Open menu">☰</button>
+        <button
+          className="hamburger"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+        >
+          ☰
+        </button>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text)' }}>
           Medi<span style={{ color: 'var(--primary)' }}>Find</span>
         </span>
@@ -108,6 +125,9 @@ const PharmacyDashboard = () => {
               <DashboardCard key={s.title} {...s} />
             ))}
           </div>
+
+          {/* Pharmacy Inventory Health Chart */}
+          <PharmacyInventoryChart inventory={inventory} loading={loading} />
 
           {/* Inventory preview table */}
           <div className="card mb-8">

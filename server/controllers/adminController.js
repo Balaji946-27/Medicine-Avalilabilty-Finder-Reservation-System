@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Pharmacy = require('../models/Pharmacy');
 const Medicine = require('../models/Medicine');
 const Inventory = require('../models/Inventory');
+const Reservation = require('../models/Reservation');
 const AppError = require('../utils/AppError');
 
 // ─── GET /api/admin/stats ─────────────────────────────────────────────────────
@@ -11,6 +12,64 @@ const getAdminStats = async (req, res, next) => {
     const totalPharmacies = await Pharmacy.countDocuments();
     const totalMedicines = await Medicine.countDocuments();
     const totalInventoryItems = await Inventory.countDocuments();
+    const totalReservations = await Reservation.countDocuments();
+    const totalPatients = await User.countDocuments({ role: 'patient' });
+    const totalPharmacyUsers = await User.countDocuments({ role: 'pharmacy' });
+    const totalBlockedUsers = await User.countDocuments({ isBlocked: true });
+
+    // Daily reservation counts for the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const dailyAgg = await Reservation.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const dailyReservations = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const found = dailyAgg.find((item) => item._id === dateStr);
+      dailyReservations.push({
+        date: dateStr,
+        label: dayLabel,
+        count: found ? found.count : 0,
+      });
+    }
+
+    // Reservation status distribution matching supported statuses in Reservation model
+    const statusAgg = await Reservation.aggregate([
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const ALL_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled', 'rejected', 'expired'];
+    const statusDistribution = ALL_STATUSES.map((st) => {
+      const match = statusAgg.find((s) => s._id === st);
+      return {
+        status: st,
+        count: match ? match.count : 0,
+      };
+    });
 
     res.status(200).json({
       success: true,
@@ -19,6 +78,12 @@ const getAdminStats = async (req, res, next) => {
         totalPharmacies,
         totalMedicines,
         totalInventoryItems,
+        totalReservations,
+        totalPatients,
+        totalPharmacyUsers,
+        totalBlockedUsers,
+        dailyReservations,
+        statusDistribution,
       },
     });
   } catch (error) {
@@ -109,10 +174,30 @@ const toggleVerifyPharmacy = async (req, res, next) => {
   }
 };
 
+// ─── GET /api/admin/reservations ──────────────────────────────────────────────
+const getAllReservationsAdmin = async (req, res, next) => {
+  try {
+    const reservations = await Reservation.find()
+      .populate('patient', 'name email')
+      .populate('pharmacy', 'pharmacyName city')
+      .populate('medicine', 'name category')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: reservations.length,
+      data: reservations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAdminStats,
   getAllUsers,
   toggleBlockUser,
   getAllPharmaciesAdmin,
   toggleVerifyPharmacy,
+  getAllReservationsAdmin,
 };

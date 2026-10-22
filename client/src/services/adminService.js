@@ -30,6 +30,12 @@ export const adminService = {
     const response = await api.put(`/api/admin/pharmacies/${id}/verify`);
     return response.data;
   },
+
+  // GET /api/admin/reservations
+  getReservations: async () => {
+    const response = await api.get('/api/admin/reservations');
+    return response.data;
+  },
 };
 
 export default adminService;

@@ -39,11 +39,11 @@ const Login = () => {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
+      <div className="auth-card auth-card-login">
         {/* Logo */}
         <div className="auth-logo">
           <div className="auth-logo-icon">M</div>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.35rem', color: 'var(--text)' }}>
             Medi<span style={{ color: 'var(--primary)' }}>Find</span>
           </span>
         </div>

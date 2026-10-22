@@ -14,17 +14,20 @@ import SearchMedicine from './pages/patient/SearchMedicine';
 import MedicineDetails from './pages/patient/MedicineDetails';
 import PharmacyDetails from './pages/patient/PharmacyDetails';
 import Profile from './pages/patient/Profile';
+import MyReservations from './pages/patient/MyReservations';
 
 // Pharmacy pages
 import PharmacyDashboard from './pages/pharmacy/PharmacyDashboard';
 import PharmacyProfile from './pages/pharmacy/PharmacyProfile';
 import Inventory from './pages/pharmacy/Inventory';
+import PharmacyReservations from './pages/pharmacy/Reservations';
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminPharmacies from './pages/admin/AdminPharmacies';
 import AdminMedicines from './pages/admin/AdminMedicines';
+import AdminReservations from './pages/admin/AdminReservations';
 
 const App = () => {
   return (
@@ -81,6 +84,16 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/patient/reservations"
+            element={
+              <ProtectedRoute>
+                <RoleRoute allowedRoles={['patient']}>
+                  <MyReservations />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Pharmacy routes */}
           <Route
@@ -109,6 +122,16 @@ const App = () => {
               <ProtectedRoute>
                 <RoleRoute allowedRoles={['pharmacy']}>
                   <Inventory />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pharmacy/reservations"
+            element={
+              <ProtectedRoute>
+                <RoleRoute allowedRoles={['pharmacy']}>
+                  <PharmacyReservations />
                 </RoleRoute>
               </ProtectedRoute>
             }
@@ -151,6 +174,16 @@ const App = () => {
               <ProtectedRoute>
                 <RoleRoute allowedRoles={['admin']}>
                   <AdminMedicines />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/reservations"
+            element={
+              <ProtectedRoute>
+                <RoleRoute allowedRoles={['admin']}>
+                  <AdminReservations />
                 </RoleRoute>
               </ProtectedRoute>
             }

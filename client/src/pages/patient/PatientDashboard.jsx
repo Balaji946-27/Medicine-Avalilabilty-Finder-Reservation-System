@@ -9,13 +9,11 @@ const PatientDashboard = () => {
 
   return (
     <div>
-      {/* Mobile header */}
       <header className="navbar" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
         <button
           className="hamburger"
-          style={{ display: 'flex' }}
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open menu"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
         >
           ☰
         </button>

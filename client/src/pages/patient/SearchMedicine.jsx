@@ -14,7 +14,19 @@ const SearchMedicine = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const categories = ['All', 'Analgesic', 'Antibiotic', 'Antidiabetic', 'Antihypertensive', 'Vitamin', 'General'];
+  const categories = [
+    'All',
+    'Analgesic',
+    'Antibiotic',
+    'Antidiabetic',
+    'Antihypertensive',
+    'Vitamin',
+    'Antacid',
+    'Allergy',
+    'Gastrointestinal',
+    'Respiratory',
+    'General',
+  ];
 
   useEffect(() => {
     fetchMedicines();
@@ -54,9 +66,8 @@ const SearchMedicine = () => {
       <header className="navbar" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
         <button
           className="hamburger"
-          style={{ display: 'flex' }}
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open menu"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
         >
           ☰
         </button>

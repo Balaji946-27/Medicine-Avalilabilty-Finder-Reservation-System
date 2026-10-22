@@ -71,7 +71,13 @@ const AdminMedicines = () => {
   return (
     <div>
       <header className="navbar" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-        <button className="hamburger" style={{ display: 'flex' }} onClick={() => setSidebarOpen(true)}>☰</button>
+        <button
+          className="hamburger"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Toggle navigation menu"
+        >
+          ☰
+        </button>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.2rem', color: 'var(--text)' }}>
           Admin — Medicine Catalogue
         </span>

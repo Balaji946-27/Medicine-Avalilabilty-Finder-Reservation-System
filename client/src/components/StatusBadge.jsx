@@ -7,7 +7,10 @@ const STATUS_CONFIG = {
   unavailable: { label: 'Unavailable',  className: 'badge badge-unavailable',  dot: 'red'   },
   pending:     { label: 'Pending',      className: 'badge badge-pending',      dot: 'amber' },
   confirmed:   { label: 'Confirmed',    className: 'badge badge-confirmed',    dot: 'green' },
+  rejected:    { label: 'Rejected',     className: 'badge badge-unavailable',  dot: 'red'   },
   cancelled:   { label: 'Cancelled',    className: 'badge badge-cancelled',    dot: 'red'   },
+  completed:   { label: 'Completed',    className: 'badge badge-confirmed',    dot: 'green' },
+  expired:     { label: 'Expired',      className: 'badge badge-unavailable',  dot: 'red'   },
   verified:    { label: 'Verified',     className: 'badge badge-verified',     dot: 'green' },
 };
 
