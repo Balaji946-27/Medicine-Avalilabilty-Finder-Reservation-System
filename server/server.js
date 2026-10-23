@@ -18,6 +18,7 @@ const allowedOrigins = [
   'https://medicine-availability-finder-reservation-system-pea84oxk3.vercel.app',
   'https://medicine-avalilabilty-finder-reservation-system-pea84oxk3.vercel.app',
   'https://medicine-availability-git-6acbe3-babalala1231412-3360s-projects.vercel.app',
+  'https://medicine-avalilabilty-finder-reserv.vercel.app',
 
   // Local development
   'http://localhost:5173',
